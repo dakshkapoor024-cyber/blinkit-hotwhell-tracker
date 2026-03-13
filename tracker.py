@@ -7,12 +7,7 @@ CHAT_ID = "6375136265"
 API_URL = "https://blinkit.com/v1/layout/listing_widgets"
 
  TARGET_CARS = [
-    "simpsons",
-    "audi r8",
-    "cone shaker",
-    "corvette c7",
-    "pagani huayra",
-    "ford sierra"
+    "hot wheels"
 ]
 
 def send_telegram(message):
@@ -61,3 +56,4 @@ while True:
 
 
     time.sleep(2)
+
