@@ -40,6 +40,8 @@ for car in TARGET_CARS:
 return False
 
 
+
+
 print("Tracker started...")
 
 while True:
@@ -47,13 +49,11 @@ while True:
         if check_stock():
             send_telegram("🔥 HOT WHEELS DETECTED ON BLINKIT!")
             print("Stock detected")
-            time.sleep(60)
         else:
             print("Checking...")
 
+        time.sleep(15)
+
     except Exception as e:
         print("Error:", e)
-
-
-    time.sleep(2)
-
+        time.sleep(30)
