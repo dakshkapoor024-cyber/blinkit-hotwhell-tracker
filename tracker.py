@@ -6,7 +6,14 @@ CHAT_ID = "6375136265"
 
 API_URL = "https://blinkit.com/v1/layout/listing_widgets"
 
-KEYWORD = "hot wheels"
+ TARGET_CARS = [
+    "simpsons",
+    "audi r8",
+    "cone shaker",
+    "corvette c7",
+    "pagani huayra",
+    "ford sierra"
+]
 
 def send_telegram(message):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
@@ -31,10 +38,12 @@ def check_stock():
 
     data = r.text.lower()
 
-    if KEYWORD in data:
+for car in TARGET_CARS:
+    if car in data:
         return True
 
-    return False
+return False
+
 
 print("Tracker started...")
 
@@ -49,5 +58,6 @@ while True:
 
     except Exception as e:
         print("Error:", e)
+
 
     time.sleep(2)
