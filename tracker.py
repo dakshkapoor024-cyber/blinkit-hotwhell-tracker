@@ -44,16 +44,14 @@ return False
 
 print("Tracker started...")
 
-while True:
-    try:
-        if check_stock():
-            send_telegram("🔥 HOT WHEELS DETECTED ON BLINKIT!")
-            print("Stock detected")
-        else:
-            print("Checking...")
 
-        time.sleep(15)
 
-    except Exception as e:
-        print("Error:", e)
-        time.sleep(30)
+try:
+    if check_stock():
+        send_telegram("🔥 HOT WHEELS DETECTED ON BLINKIT!")
+        print("Stock detected")
+    else:
+        print("No stock found")
+
+except Exception as e:
+    print("Error:", e)
