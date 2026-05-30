@@ -1,23 +1,13 @@
 import requests
 import time
+import re
 from datetime import datetime
-import random
 
 BOT_TOKEN      = "8541447716:AAFxmfgW0ZHakb2bn3dgTtveymTDP9yEfIM"
 CHAT_ID        = "6375136265"
 CHECK_INTERVAL = 45
 
 TARGET_MODELS  = ["ferrari", "kick sauber", "sauber", "porsche 911", "porsche 911 carrera"]
-
-LATITUDE  = "28.6066"
-LONGITUDE = "77.3130"
-
-USER_AGENTS = [
-    "com.grofers.customerapp/24.5.0 (Android 13; Pixel 7)",
-    "com.grofers.customerapp/24.4.1 (Android 12; Samsung Galaxy S22)",
-    "com.grofers.customerapp/24.3.0 (Android 13; OnePlus 11)",
-    "com.grofers.customerapp/24.5.0 (Android 12; Redmi Note 12)",
-]
 
 def send_telegram(message):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
@@ -36,61 +26,36 @@ def is_target(name):
     return any(kw in n for kw in ["hot wheels", "hotwheels"]) and any(kw in n for kw in TARGET_MODELS)
 
 def check_blinkit():
-    session = requests.Session()
-    ua = random.choice(USER_AGENTS)
-    
     headers = {
-        "User-Agent": ua,
-        "Accept": "application/json",
-        "Accept-Language": "en-IN",
-        "lat": LATITUDE,
-        "lon": LONGITUDE,
-        "Origin": "https://blinkit.com",
-        "Referer": "https://blinkit.com/",
-        "app_client": "consumer",
-        "app_version": "24.5.0",
-        "web_app_version": "1000000",
-        "auth_key": "c55b814b-3c02-4ff2-b7e7-5a5b2f7c5e9f",
+        "User-Agent": "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "en-IN,en;q=0.9",
+        "Accept-Encoding": "gzip, deflate, br",
     }
 
     try:
-        session.get("https://blinkit.com", headers=headers, timeout=10)
-        time.sleep(random.uniform(1, 3))
-    except:
-        pass
-
-    url = "https://blinkit.com/v6/search/"
-    params = {"q": "hot wheels", "start": 0, "size": 20}
-
-    try:
-        r = session.get(url, headers=headers, params=params, timeout=15)
-        print(f"[{now()}] Status: {r.status_code}")
+        r = requests.get(
+            "https://blinkit.com/s/?q=hot+wheels",
+            headers=headers,
+            timeout=20
+        )
+        print(f"[{now()}] Status: {r.status_code} Size: {len(r.text)}")
 
         if r.status_code != 200:
             return []
 
-        data = r.json()
         products = []
+        matches = re.findall(r'"name"\s*:\s*"([^"]*)"', r.text, re.IGNORECASE)
 
-        def dig(obj):
-            if isinstance(obj, dict):
-                name = obj.get("name", "")
-                if name and is_target(name):
-                    qty = obj.get("quantity", 1)
-                    in_stock = int(qty) > 0 if str(qty).isdigit() else True
-                    products.append({
-                        "name": name,
-                        "price": obj.get("price", obj.get("mrp", "N/A")),
-                        "in_stock": in_stock,
-                        "id": str(obj.get("id", name))[:40],
-                    })
-                for v in obj.values():
-                    dig(v)
-            elif isinstance(obj, list):
-                for item in obj:
-                    dig(item)
+        for name in matches:
+            if is_target(name):
+                products.append({
+                    "name": name,
+                    "price": "179",
+                    "in_stock": True,
+                    "id": name[:40],
+                })
 
-        dig(data)
         return products
 
     except Exception as e:
