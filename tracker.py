@@ -28,20 +28,30 @@ def is_target(name):
     return any(kw in n for kw in ["hot wheels", "hotwheels"]) and any(kw in n for kw in TARGET_MODELS)
 
 def check_blinkit():
-    api_key = "29187163bf62494aa55fe404008383fcef5fce87a84"
-    target_url = f"https://blinkit.com/v6/search/?q=hot+wheels&start=0&size=20"
-    
-    scrape_url = f"https://api.scrape.do?token={api_key}&url={target_url}&customHeaders=true"
-    
+    session = requests.Session()
     headers = {
+        "User-Agent": "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Mobile Safari/537.36",
+        "Accept": "application/json, text/plain, */*",
+        "Accept-Language": "en-IN,en;q=0.9",
         "lat": LATITUDE,
         "lon": LONGITUDE,
+        "Referer": "https://blinkit.com/s/?q=hot%20wheels",
+        "Origin": "https://blinkit.com",
         "app_client": "consumer",
         "web_app_version": "1000000",
     }
 
     try:
-        r = requests.get(scrape_url, headers=headers, timeout=30)
+        session.get("https://blinkit.com", headers=headers, timeout=10)
+        time.sleep(2)
+    except:
+        pass
+
+    url = "https://blinkit.com/v6/search/"
+    params = {"q": "hot wheels", "start": 0, "size": 20}
+
+    try:
+        r = session.get(url, headers=headers, params=params, timeout=15)
         print(f"[{now()}] Status: {r.status_code}")
 
         if r.status_code != 200:
