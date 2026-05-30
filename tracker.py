@@ -1,6 +1,7 @@
 import requests
 import time
 from datetime import datetime
+import random
 
 BOT_TOKEN      = "8541447716:AAFxmfgW0ZHakb2bn3dgTtveymTDP9yEfIM"
 CHAT_ID        = "6375136265"
@@ -10,6 +11,13 @@ TARGET_MODELS  = ["ferrari", "kick sauber", "sauber", "porsche 911", "porsche 91
 
 LATITUDE  = "28.6066"
 LONGITUDE = "77.3130"
+
+USER_AGENTS = [
+    "com.grofers.customerapp/24.5.0 (Android 13; Pixel 7)",
+    "com.grofers.customerapp/24.4.1 (Android 12; Samsung Galaxy S22)",
+    "com.grofers.customerapp/24.3.0 (Android 13; OnePlus 11)",
+    "com.grofers.customerapp/24.5.0 (Android 12; Redmi Note 12)",
+]
 
 def send_telegram(message):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
@@ -29,21 +37,25 @@ def is_target(name):
 
 def check_blinkit():
     session = requests.Session()
+    ua = random.choice(USER_AGENTS)
+    
     headers = {
-        "User-Agent": "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Mobile Safari/537.36",
-        "Accept": "application/json, text/plain, */*",
-        "Accept-Language": "en-IN,en;q=0.9",
+        "User-Agent": ua,
+        "Accept": "application/json",
+        "Accept-Language": "en-IN",
         "lat": LATITUDE,
         "lon": LONGITUDE,
-        "Referer": "https://blinkit.com/s/?q=hot%20wheels",
         "Origin": "https://blinkit.com",
+        "Referer": "https://blinkit.com/",
         "app_client": "consumer",
+        "app_version": "24.5.0",
         "web_app_version": "1000000",
+        "auth_key": "c55b814b-3c02-4ff2-b7e7-5a5b2f7c5e9f",
     }
 
     try:
         session.get("https://blinkit.com", headers=headers, timeout=10)
-        time.sleep(2)
+        time.sleep(random.uniform(1, 3))
     except:
         pass
 
