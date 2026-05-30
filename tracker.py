@@ -2,7 +2,7 @@ import requests
 import time
 from datetime import datetime
 
-BOT_TOKEN      = "8541447716:AAFxmfgWOZHakb2bn3dgTtveymTDP9yEfIM"
+BOT_TOKEN      = 8541447716:AAFxmfgW0ZHakb2bn3dgTtveymTDP9yEfIM
 CHAT_ID        = "6375136265"
 CHECK_INTERVAL = 45
 
